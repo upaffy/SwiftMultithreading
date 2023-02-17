@@ -37,17 +37,19 @@ class FoxListCell: UITableViewCell {
         
         var unfilteredImage: UIImage?
         
-        imageManager.fetchImage(from: fox.imageURL) { result in
+        imageManager.fetchImage(from: fox.imageURL) { [weak self] result in
             switch result {
             case .success(let imageData):
                 unfilteredImage = UIImage(data: imageData)
+                self?.foxImage.image = unfilteredImage
+                
+                imageManager.filterImage(unfilteredImage) { [weak self] filteredImage in
+                    guard let self = self else { return }
+                    self.foxImage.image = filteredImage ?? UIImage(systemName: self.defaultImageSystemName)
+                }
             case .failure(_):
                 break
             }
-        }
-        
-        imageManager.filterImage(unfilteredImage) { filteredImage in
-            self.foxImage.image = filteredImage ?? UIImage(systemName: self.defaultImageSystemName)
         }
     }
 }

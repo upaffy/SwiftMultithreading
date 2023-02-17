@@ -12,36 +12,22 @@ let pageSize = 20
 let imageManager = ImageManager.shared
 
 class FoxListViewController: UITableViewController {
-
-    lazy var imagesURL: [String] = {
-        var images: [String] = []
-        
-        for _ in 0..<pageSize {
-            imageManager.fetchRandomImageURL { result in
-                switch result {
-                case .success(let imageURL):
-                    images.append(imageURL)
-                case .failure(_):
-                    break
-                }
-            }
-        }
-        
-        return images
-    }()
+    
+    var foxes: [Fox] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupTableView()
         setupNavBar()
+        fetchFoxes()
     }
 }
 
 // MARK: - Table view data source
 extension FoxListViewController {
     override func tableView(_ tableView: UITableView?, numberOfRowsInSection section: Int) -> Int {
-        return imagesURL.count
+        return foxes.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -53,10 +39,7 @@ extension FoxListViewController {
             return UITableViewCell()
         }
         
-        let fox = Fox(
-            imageURL: imagesURL[indexPath.row],
-            name: "Лиса №\(indexPath.row + 1)"
-        )
+        let fox = foxes[indexPath.row]
         cell.configure(with: fox)
         
         return cell
@@ -76,5 +59,22 @@ extension FoxListViewController {
     
     private func setupNavBar() {
         self.title = "Foxes"
+    }
+    
+    private func fetchFoxes() {
+        for _ in 0..<pageSize {
+            imageManager.fetchRandomImageURL { [weak self] result in
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let imageURL):
+                    let fox = Fox(imageURL: imageURL, name: "Лиса №\(self.foxes.count + 1)")
+                    self.foxes.append(fox)
+                    self.tableView.reloadData()
+                case .failure(_):
+                    break
+                }
+            }
+        }
     }
 }

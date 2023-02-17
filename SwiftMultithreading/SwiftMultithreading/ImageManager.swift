@@ -28,41 +28,64 @@ final class ImageManager: ImageManagerProtocol {
     private let dataSourceURL = "https://randomfox.ca/floof/"
     
     func fetchRandomImageURL(completion: @escaping (Result<String, NetworkError>) -> Void) {
-        do {
-            guard let url = URL(string: dataSourceURL) else {
-                completion(.failure(.invalidURL))
-                return
+        DispatchQueue.global().async {
+            do {
+                guard let url = URL(string: self.dataSourceURL) else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.invalidURL))
+                    }
+                    return
+                }
+                
+                let data = try Data(contentsOf: url)
+                let json = try JSONSerialization.jsonObject(with: data)
+                
+                guard let object = json as? [String: String], let imageURL = object["image"] else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.decodeError))
+                    }
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    completion(.success(imageURL))
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(.failure(.fetchingError))
+                }
             }
-            
-            let data = try Data(contentsOf: url)
-            let json = try JSONSerialization.jsonObject(with: data)
-            
-            guard let object = json as? [String: String], let imageURL = object["image"] else {
-                completion(.failure(.decodeError))
-                return
-            }
-            
-            completion(.success(imageURL))
-        } catch {
-            completion(.failure(.fetchingError))
         }
     }
     
     func fetchImage(from stringURL: String, completion: @escaping (Result<Data, NetworkError>) -> Void) {
-        guard let url = URL(string: stringURL) else {
-            completion(.failure(.invalidURL))
-            return
-        }
-        
-        if let imageData = try? Data(contentsOf: url) {
-            completion(.success(imageData))
-        } else {
-            completion(.failure(.fetchingError))
+        DispatchQueue.global().async {
+            guard let url = URL(string: stringURL) else {
+                DispatchQueue.main.async {
+                    completion(.failure(.invalidURL))
+                }
+                return
+            }
+            
+            if let imageData = try? Data(contentsOf: url) {
+                DispatchQueue.main.async {
+                    completion(.success(imageData))
+                }
+            } else {
+                DispatchQueue.main.async {
+                    completion(.failure(.fetchingError))
+                }
+            }
         }
     }
     
     func filterImage(_ image: UIImage?, completion: @escaping (UIImage?) -> Void) {
-        completion(applySepiaFilter(image))
+        DispatchQueue.global().async {
+            let filteredImage = self.applySepiaFilter(image)
+            DispatchQueue.main.async {
+                completion(filteredImage)
+            }
+        }
     }
 }
 
