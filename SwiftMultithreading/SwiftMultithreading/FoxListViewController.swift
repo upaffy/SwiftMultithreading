@@ -9,39 +9,25 @@ import UIKit
 import CoreImage
 
 let pageSize = 20
-let imageManager = ImageManager.shared
+let imageManager = OperationQueueImageManager.shared
 
 class FoxListViewController: UITableViewController {
-
-    lazy var imagesURL: [String] = {
-        var images: [String] = []
-        
-        for _ in 0..<pageSize {
-            imageManager.fetchRandomImageURL { result in
-                switch result {
-                case .success(let imageURL):
-                    images.append(imageURL)
-                case .failure(_):
-                    break
-                }
-            }
-        }
-        
-        return images
-    }()
+    
+    var foxes: [Fox] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupTableView()
         setupNavBar()
+        fetchFoxes()
     }
 }
 
 // MARK: - Table view data source
 extension FoxListViewController {
     override func tableView(_ tableView: UITableView?, numberOfRowsInSection section: Int) -> Int {
-        return imagesURL.count
+        return foxes.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -53,11 +39,25 @@ extension FoxListViewController {
             return UITableViewCell()
         }
         
-        let fox = Fox(
-            imageURL: imagesURL[indexPath.row],
-            name: "Лиса №\(indexPath.row + 1)"
-        )
-        cell.configure(with: fox)
+        let fox = foxes[indexPath.row]
+        
+        cell.foxTitle.text = fox.name
+        cell.foxImage.image = fox.image
+        
+        switch (fox.state) {
+        case .filtered:
+            break
+        case .failed:
+            cell.foxTitle.text = "Failed to load"
+        case .new:
+            imageManager.startDownload(for: fox, at: indexPath) {
+                self.tableView.reloadRows(at: [indexPath], with: .fade)
+            }
+        case .downloaded:
+            imageManager.startFiltration(for: fox, at: indexPath) {
+                self.tableView.reloadRows(at: [indexPath], with: .fade)
+            }
+        }
         
         return cell
     }
@@ -65,6 +65,23 @@ extension FoxListViewController {
 
 // MARK: - private methods
 extension FoxListViewController {
+    private func fetchFoxes() {
+        for _ in 0..<pageSize {
+            imageManager.fetchRandomImageURL { [weak self] result in
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let imageURL):
+                    let fox = Fox(name: "Лиса №\(self.foxes.count + 1)", imageURL: imageURL)
+                    self.foxes.append(fox)
+                    self.tableView.reloadData()
+                case .failure(_):
+                    break
+                }
+            }
+        }
+    }
+    
     private func setupTableView() {
         tableView.register(
             UINib(nibName: FoxListCell.reuseId, bundle: nil),

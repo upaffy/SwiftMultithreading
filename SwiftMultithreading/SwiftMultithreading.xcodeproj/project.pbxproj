@@ -17,6 +17,7 @@
 		E96EF4E6299E2C5500C0DE75 /* FoxListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96EF4E4299E2C5500C0DE75 /* FoxListCell.swift */; };
 		E96EF4E8299E314600C0DE75 /* Fox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96EF4E7299E314600C0DE75 /* Fox.swift */; };
 		E96EF4EB299E321E00C0DE75 /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96EF4EA299E321E00C0DE75 /* ImageManager.swift */; };
+		E9D5242A299EE6A700D3AF7F /* OperatoinQueueImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D52429299EE6A700D3AF7F /* OperatoinQueueImageManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		E96EF4E4299E2C5500C0DE75 /* FoxListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoxListCell.swift; sourceTree = "<group>"; };
 		E96EF4E7299E314600C0DE75 /* Fox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fox.swift; sourceTree = "<group>"; };
 		E96EF4EA299E321E00C0DE75 /* ImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
+		E9D52429299EE6A700D3AF7F /* OperatoinQueueImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatoinQueueImageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +73,7 @@
 				E96EF4E2299E2C5500C0DE75 /* FoxListCell */,
 				E96EF4E1299E29D600C0DE75 /* Resources */,
 				E96EF4E0299E29C000C0DE75 /* App */,
+				E9D52429299EE6A700D3AF7F /* OperatoinQueueImageManager.swift */,
 			);
 			path = SwiftMultithreading;
 			sourceTree = "<group>";
@@ -185,6 +188,7 @@
 			files = (
 				E96EF4EB299E321E00C0DE75 /* ImageManager.swift in Sources */,
 				E96EF4D1299E29B600C0DE75 /* FoxListViewController.swift in Sources */,
+				E9D5242A299EE6A700D3AF7F /* OperatoinQueueImageManager.swift in Sources */,
 				E96EF4CD299E29B600C0DE75 /* AppDelegate.swift in Sources */,
 				E96EF4E8299E314600C0DE75 /* Fox.swift in Sources */,
 				E96EF4E6299E2C5500C0DE75 /* FoxListCell.swift in Sources */,

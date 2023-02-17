@@ -31,23 +31,4 @@ class FoxListCell: UITableViewCell {
         let margins = UIEdgeInsets(top: 10, left: 8, bottom: 10, right: 8)
         contentView.frame = contentView.frame.inset(by: margins)
     }
-    
-    func configure(with fox: Fox) {
-        self.foxTitle.text = fox.name
-        
-        var unfilteredImage: UIImage?
-        
-        imageManager.fetchImage(from: fox.imageURL) { result in
-            switch result {
-            case .success(let imageData):
-                unfilteredImage = UIImage(data: imageData)
-            case .failure(_):
-                break
-            }
-        }
-        
-        imageManager.filterImage(unfilteredImage) { filteredImage in
-            self.foxImage.image = filteredImage ?? UIImage(systemName: self.defaultImageSystemName)
-        }
-    }
 }
